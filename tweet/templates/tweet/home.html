@@ -64,13 +64,13 @@
         </div>
       </div>
 
-      {% for tweet in tweets%}
+      {% for object in tweets%}
       <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <img src="{{ tweet.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
-        <span class="w3-right w3-opacity">{{ tweet.date_posted }}</span>
-        <h4>{{ tweet.author }}</h4><br>
+        <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+        <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
+        <h4>{{ object.author }}</h4><br>
         <hr class="w3-clear">
-        <p>{{ tweet.text }}</p>
+        <a href="{% url 'tweet-detail' object.id %}"><p>{{ object.text }}</p></a>
         <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</button> 
         <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</button> 
       </div>
