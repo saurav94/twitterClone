@@ -9,11 +9,11 @@
     <p>{{ object.text }}</p>
 
     {% if object.author == user%}
-    <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"> Update</button> 
-    <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"> Delete</button> 
+    <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+    <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
     {% else %}
-    <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</button> 
-    <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</button>
+    <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+    <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
     {% endif %}
   </div>
 {% endblock %}

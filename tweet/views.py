@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView
-from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Tweet
 
 class TweetListView(ListView):
@@ -15,7 +15,7 @@ class TweetDetailView(DetailView):
     model = Tweet
 
 
-class TweetCreateView(CreateView):
+class TweetCreateView(LoginRequiredMixin, CreateView):
     model = Tweet
     fields = ['text']
 
@@ -23,4 +23,21 @@ class TweetCreateView(CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
+class TweetUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Tweet
+    fields = ['text']
+
+    def test_func(self):
+        tweet = self.get_object()
+        return self.request.user == tweet.author
+
+
+class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Tweet
+    success_url = '/'
+
+    def test_func(self):
+        tweet = self.get_object()
+        return self.request.user == tweet.author
 
