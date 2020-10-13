@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="w3-container w3-content content-section" style="max-width:1400px;margin-top:10px">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Your Tweet</legend>

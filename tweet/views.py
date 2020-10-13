@@ -4,6 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Tweet
 
+def about(request):
+    return render(request, 'tweet/about.html')
+
 class TweetListView(ListView):
     model = Tweet
     template_name = 'tweet/home.html' #<app>/<model>_<viewtype>.html
@@ -17,7 +20,7 @@ class TweetDetailView(DetailView):
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
     model = Tweet
-    fields = ['text']
+    fields = ['text', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -26,7 +29,7 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
 
 class TweetUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tweet
-    fields = ['text']
+    fields = ['text', 'image']
 
     def test_func(self):
         tweet = self.get_object()
