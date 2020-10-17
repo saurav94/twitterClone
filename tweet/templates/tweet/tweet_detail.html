@@ -4,20 +4,21 @@
 <div class="w3-container w3-content" style="max-width:1400px;margin-top: 10px;">
   <div class="w3-col m12">
     <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+        <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
         <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
-        <h4>{{ object.author }}</h4><br>
+        <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
+        <br>
         <hr class="w3-clear">
         <p>{{ object.text }}</p>
         {% if object.image %}
           <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
         {% endif %}
-        {% if object.author == user%}
-        <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
-        <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+        {% if object.author == user %}
+          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
         {% else %}
-        <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
-        <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
+          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
         {% endif %}
     </div>
   </div>

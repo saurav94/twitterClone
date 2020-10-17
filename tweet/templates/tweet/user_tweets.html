@@ -1,7 +1,8 @@
 {% extends 'tweet/base.html' %}
 {% load static %}
-
+{% load crispy_forms_tags%}
 {% block content %}
+
 <!-- Page Container -->
 <div class="w3-container w3-content" style="max-width:1400px;margin-top: 10px;">    
   <!-- The Grid -->
@@ -9,7 +10,22 @@
 
     <!-- Left Column -->
     <div class="w3-col m3">
-
+        <!-- Profile -->
+        <div class="w3-card w3-round w3-white">
+            <div class="w3-container">
+                <h4 class="w3-center">{{ view.kwargs.username }}</h4>
+                <p class="w3-center"><img src="{{ tweets.0.author.profile.image.url }}" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
+                <p class="w3-center w3-text-theme"> {{tweets.count}} Tweets </p>
+                {% if view.kwargs.username == user.username %}
+                    <a class="w3-button w3-block w3-theme-l4" href="{% url 'profile' %}" >Edit</a>
+                {% endif %}
+                <hr>
+                <p><i class="fa fa-user fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p>
+                <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
+                <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p>
+            </div>
+        </div>
+        <br>
       <!-- Accordion -->
       <div class="w3-card w3-round">
         <div class="w3-white">
@@ -53,39 +69,39 @@
         
     <!-- Middle Column -->
     <div class="w3-col m7">
-      <div class="w3-row-padding">
-        <div class="w3-col m12">
-          <div class="w3-card w3-round w3-white">
-            <div class="w3-container w3-padding" >
-              <p onclick="openCreateTweet()" contenteditable="true" class="w3-border w3-padding">Status: Feeling Blue</p>
-              <a type="button" class="w3-button w3-theme" href="{% url 'tweet-create' %}" ><i class="fa fa-pencil"></i>  Post</a> 
+        <div class="w3-row-padding">
+            <div class="w3-col m12">
+              <div class="w3-card w3-round w3-white">
+                <div class="w3-container w3-padding" >
+                  <p onclick="openCreateTweet()" contenteditable="true" class="w3-border w3-padding">Status: Feeling Blue</p>
+                  <a type="button" class="w3-button w3-theme" href="{% url 'tweet-create' %}" ><i class="fa fa-pencil"></i>  Post</a> 
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {% for object in tweets %}
-      <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
-        <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
-        <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
-        <br>
-        <hr class="w3-clear">
-        <div id="detailTweet" onclick="openDetailTweet()" data-url="{% url 'tweet-detail' object.id %}" href="{% url 'tweet-detail' object.id %}">
-          <p>{{ object.text }}</p>
-          {% if object.image %}
-            <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
-          {% endif %}
-        </div>
-        {% if object.author == user %}
-          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
-        {% else %}
-          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
-        {% endif %}
-      </div>
-      {% endfor %}
+        
+        {% for object in tweets %}
+            <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+            <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
+            <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
+            <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
+            <br>
+            <hr class="w3-clear">
+            <div id="detailTweet" onclick="openDetailTweet()" data-url="{% url 'tweet-detail' object.id %}" href="{% url 'tweet-detail' object.id %}">
+                <p>{{ object.text }}</p>
+                {% if object.image %}
+                <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
+                {% endif %}
+            </div>
+            {% if object.author == user %}
+                <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+                <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+            {% else %}
+                <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+                <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
+            {% endif %}
+            </div>
+        {% endfor %}
     <!-- End Middle Column -->
     </div>
     
@@ -108,23 +124,6 @@
               <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
           </div>
           
-        </div>
-      </div>
-      <br>
-
-      <div class="w3-card w3-round w3-white w3-center">
-        <div class="w3-container">
-          <p>Who to follow</p>
-          <img src="{% static '/tweet/avatar6.png' %}" alt="Avatar" style="width:50%"><br>
-          <span>Jane Doe</span>
-          <div class="w3-row w3-opacity">
-            <div class="w3-half">
-              <button class="w3-button w3-block w3-green w3-section" title="Accept"><i class="fa fa-check"></i></button>
-            </div>
-            <div class="w3-half">
-              <button class="w3-button w3-block w3-red w3-section" title="Decline"><i class="fa fa-remove"></i></button>
-            </div>
-          </div>
         </div>
       </div>
       <br>
@@ -164,6 +163,5 @@ function openDetailTweet() {
   url = document.getElementById('detailTweet').attributes["data-url"].value
   window.location.href = url
 }
-
 </script>
 {% endblock script %}
