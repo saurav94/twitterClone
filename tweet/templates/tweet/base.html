@@ -74,7 +74,7 @@
 <!-- Footer -->
 <footer class="w3-container w3-theme-d3 w3-padding-16">
   <h5 class="w3-center">Twitter Clone - A Django Project</h5>
-  {% if is_paginated %}
+  <!-- {% if is_paginated %}
     <div class="w3-center">
       {% if page_obj.has_previous %}
         <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
@@ -94,7 +94,7 @@
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       {% endif %}
     </div>
-  {% endif %}
+  {% endif %} -->
 </footer>
 
 <footer class="w3-container w3-theme-d5">
@@ -103,22 +103,42 @@
 
 </div>
 
-{% block script %} {% endblock %}
-<script>
-// Used to toggle the menu on smaller screens when clicking on the menu button
-function openNav() {
-  var x = document.getElementById("navDemo");
-  if (x.className.indexOf("w3-show") == -1) {
-    x.className += " w3-show";
-  } else { 
-    x.className = x.className.replace(" w3-show", "");
-  }
-}
-</script>
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src="{% static 'tweet/js/jquery-2.2.4.min.js' %}"></script>
+<script src="{% static 'tweet/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'tweet/js/infinite.min.js' %}"></script>
+
+{% block script %} {% endblock %}
+
+<script>
+  // Used to toggle the menu on smaller screens when clicking on the menu button
+  function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+      x.className += " w3-show";
+    } else { 
+      x.className = x.className.replace(" w3-show", "");
+    }
+  }
+
+// Infinite scrolling
+var infinite = new Waypoint.Infinite({
+  element: $('.infinite-container')[0],
+  // handler: function(direction) {},
+  offset: 'bottom-in-view',
+
+  onBeforePageLoad: function () {
+    $('.spinner-border').show();
+  },
+  onAfterPageLoad: function () {
+    $('.spinner-border').hide();
+  }
+});
+
+</script>
 
 </body>
 </html> 

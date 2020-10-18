@@ -69,39 +69,52 @@
         
     <!-- Middle Column -->
     <div class="w3-col m7">
-        <div class="w3-row-padding">
-            <div class="w3-col m12">
-              <div class="w3-card w3-round w3-white">
-                <div class="w3-container w3-padding" >
-                  <p onclick="openCreateTweet()" contenteditable="true" class="w3-border w3-padding">Status: Feeling Blue</p>
-                  <a type="button" class="w3-button w3-theme" href="{% url 'tweet-create' %}" ><i class="fa fa-pencil"></i>  Post</a> 
-                </div>
-              </div>
+      <div class="w3-row-padding">
+        <div class="w3-col m12">
+          <div class="w3-card w3-round w3-white">
+            <div class="w3-container w3-padding" >
+              <p onclick="openCreateTweet()" contenteditable="true" class="w3-border w3-padding">Status: Feeling Blue</p>
+              <a type="button" class="w3-button w3-theme" href="{% url 'tweet-create' %}" ><i class="fa fa-pencil"></i>  Post</a> 
             </div>
           </div>
-        
+        </div>
+      </div>
+      
+      <div class="infinite-container">
         {% for object in tweets %}
-            <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-            <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
-            <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
-            <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
-            <br>
-            <hr class="w3-clear">
-            <div id="detailTweet" onclick="openDetailTweet()" data-url="{% url 'tweet-detail' object.id %}" href="{% url 'tweet-detail' object.id %}">
-                <p>{{ object.text }}</p>
-                {% if object.image %}
-                <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
-                {% endif %}
-            </div>
-            {% if object.author == user %}
-                <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
-                <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
-            {% else %}
-                <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
-                <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
-            {% endif %}
-            </div>
+          <div class="infinite-item w3-container w3-card w3-white w3-round w3-margin"><br>
+          <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
+          <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
+          <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
+          <br>
+          <hr class="w3-clear">
+          <div id="detailTweet" onclick="openDetailTweet()" data-url="{% url 'tweet-detail' object.id %}" href="{% url 'tweet-detail' object.id %}">
+              <p>{{ object.text }}</p>
+              {% if object.image %}
+              <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
+              {% endif %}
+          </div>
+          {% if object.author == user %}
+              <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+              <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+          {% else %}
+              <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+              <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
+          {% endif %}
+          </div>
         {% endfor %}
+      </div>
+
+      {% if is_paginated and page_obj.has_next %}
+        <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+        <div class="d-flex justify-content-center" style="display:none;">
+          <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      {% endif %}
+      
+
     <!-- End Middle Column -->
     </div>
     
@@ -111,12 +124,13 @@
         <div class="w3-container">
           <p>Upcoming Events:</p>
           <hr class="w3-clear">
+
           <div>
               <p><strong>Session</strong></p>
               <p>Tuesday 15:00</p>
               <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
-              <hr class="w3-clear">
           </div>
+          <hr class="w3-clear">
 
           <div>
               <p><strong>Concert</strong></p>
