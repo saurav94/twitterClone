@@ -1,9 +1,8 @@
 .DS_Store
 .vscode/
+.idea/
 
 __pycache__/
 *.py[cod]
 
 db.sqlite3
-
-twitterClone/secrets.py

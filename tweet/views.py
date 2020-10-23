@@ -4,12 +4,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Tweet
 
+
 def about(request):
     return render(request, 'tweet/about.html')
 
+
 class TweetListView(ListView):
     model = Tweet
-    template_name = 'tweet/home.html' #<app>/<model>_<viewtype>.html
+    template_name = 'tweet/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'tweets'
     ordering = ['-date_posted']
     paginate_by = 5
@@ -55,4 +57,3 @@ class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         tweet = self.get_object()
         return self.request.user == tweet.author
-

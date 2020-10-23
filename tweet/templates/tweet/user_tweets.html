@@ -15,9 +15,15 @@
             <div class="w3-container">
                 <h4 class="w3-center">{{ view.kwargs.username }}</h4>
                 <p class="w3-center"><img src="{{ tweets.0.author.profile.image.url }}" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
-                <p class="w3-center w3-text-theme"> {{tweets.count}} Tweets </p>
+                <div class="w3-center w3-text-theme"> {{tweets.count}} Tweets </div>
+                <p class="w3-center">
+                    <span>0 Followers | </span>
+                    <span>0 Following</span>
+                </p>
                 {% if view.kwargs.username == user.username %}
                     <a class="w3-button w3-block w3-theme-l4" href="{% url 'profile' %}" >Edit</a>
+                {% else %}
+                    <a class="w3-button w3-block w3-theme-l4" href="#" >Follow</a>
                 {% endif %}
                 <hr>
                 <p><i class="fa fa-user fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p>
