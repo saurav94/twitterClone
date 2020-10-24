@@ -13,14 +13,52 @@
         {% if object.image %}
           <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
         {% endif %}
+        <p id="likeCount-{{object.id}}" class="text-muted">{{ object.get_likes_count }} likes</p>
         {% if object.author == user %}
           <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
           <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
         {% else %}
-          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+          {% if is_liked %}
+            <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a> 
+          {% else %}
+            <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+          {% endif %}
+          <!-- <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a>  -->
           <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
         {% endif %}
     </div>
   </div>
 </div>
+
 {% endblock %}
+
+{% block script %}
+<script>
+  function likeTweet(likeUrl){
+  likeUrl = likeUrl + "/like/"
+
+  $.ajax({
+    url: likeUrl,
+    method: 'GET',
+    data: {},
+    success: function(data) {
+      console.log(data)
+      likeCountId = "#likeCount-" + data.id
+      $(likeCountId)[0].innerText = data.count + " likes"
+
+      likeButtonId = "#likeButton-" + data.id
+      if (data.like){
+        $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-down"></i> &nbsp;Unlike'
+      }
+      else {
+        $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-up"></i> &nbsp;Like'
+      }
+      
+    },
+    error: function(error){
+      console.log(error)
+    }
+  })
+}
+</script>
+{% endblock script %}

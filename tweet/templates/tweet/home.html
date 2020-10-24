@@ -72,17 +72,22 @@
             <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
             <br>
             <hr class="w3-clear">
-            <div id="detailTweet" onclick="openDetailTweet()" data-url="{% url 'tweet-detail' object.id %}" href="{% url 'tweet-detail' object.id %}">
+            <div class="detailTweet" onclick="openDetailTweet('{{ object.get_absolute_url }}')">
               <p>{{ object.text }}</p>
               {% if object.image %}
                 <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
               {% endif %}
+              <p id="likeCount-{{object.id}}" class="text-muted">{{ object.get_likes_count }} likes</p>
             </div>
             {% if object.author == user %}
               <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
               <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
             {% else %}
-              <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+              {% if is_liked[object.id] %}
+                <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a> 
+              {% else %}
+                <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+              {% endif %}
               <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
             {% endif %}
           </div>
@@ -175,9 +180,35 @@ function openCreateTweet() {
   window.location.href = "{% url 'tweet-create' %}"
 }
 
-function openDetailTweet() {
-  url = document.getElementById('detailTweet').attributes["data-url"].value
-  window.location.href = url
+function openDetailTweet(tweetUrl) {
+  window.location.href = tweetUrl
+}
+
+function likeTweet(likeUrl){
+  likeUrl = likeUrl + "/like/"
+
+  $.ajax({
+    url: likeUrl,
+    method: 'GET',
+    data: {},
+    success: function(data) {
+      console.log(data)
+      likeCountId = "#likeCount-" + data.id
+      $(likeCountId)[0].innerText = data.count + " likes"
+
+      likeButtonId = "#likeButton-" + data.id
+      if (data.like){
+        $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-down"></i> &nbsp;Unlike'
+      }
+      else {
+        $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-up"></i> &nbsp;Like'
+      }
+      
+    },
+    error: function(error){
+      console.log(error)
+    }
+  })
 }
 
 </script>

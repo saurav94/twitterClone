@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Tweet
 
@@ -9,12 +13,43 @@ def about(request):
     return render(request, 'tweet/about.html')
 
 
+@api_view(['GET'])
+@login_required
+def like_tweet(request, pk):
+    tweet = get_object_or_404(Tweet, id=pk)
+
+    likeData = {
+        "id": pk,
+        "like": False,
+        "count": 0
+    }
+    if tweet.likes.filter(id=request.user.id).exists():
+        tweet.likes.remove(request.user)
+    else:
+        likeData['like'] = True
+        tweet.likes.add(request.user)
+
+    likeData['count'] = tweet.get_likes_count()
+    return Response(likeData)
+
 class TweetListView(ListView):
     model = Tweet
     template_name = 'tweet/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'tweets'
     ordering = ['-date_posted']
     paginate_by = 5
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["is_liked"] = {}
+
+        for tweet in context['tweets']:
+            if tweet.likes.filter(id=self.request.user.id).exists():
+                context["is_liked"][tweet.id] = True
+            else:
+                context["is_liked"][tweet.id] = False
+        
+        return context
 
 
 class UserTweetListView(ListView):
@@ -30,6 +65,17 @@ class UserTweetListView(ListView):
 
 class TweetDetailView(DetailView):
     model = Tweet
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context["is_liked"] = False
+        tweet = self.get_object()
+
+        if tweet.likes.filter(id=self.request.user.id).exists():
+            context["is_liked"] = True
+        
+        return context
 
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
