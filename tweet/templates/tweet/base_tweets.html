@@ -103,7 +103,8 @@
               {% endif %}
               
             </div>
-            <p><a id="likeCount-{{object.id}}" class="text-muted" href="#">{{ object.get_likes_count }} likes</a></p>
+            <p id="likeCount-{{object.id}}" class="link text-muted" onclick="getUsersWhoLiked('{{ object.get_absolute_url }}')"
+            data-toggle="modal" data-target="#myModal">{{ object.get_likes_count }} likes</p>
             {% if object.author == user %}
               <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
               <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
@@ -180,6 +181,31 @@
   <!-- End Grid -->
   </div>
   
+  <!-- The Modal -->
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Modal Heading</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          Modal body..
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
 <!-- End Page Container -->
 </div>
 <br>

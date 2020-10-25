@@ -7,7 +7,8 @@ urlpatterns = [
     path('about/', views.about, name='tweet-about'),
     path('user/<str:username>', views.UserTweetListView.as_view(), name='user-tweets'),
     path('tweet/<int:pk>', views.TweetDetailView.as_view(), name='tweet-detail'),
-    path('tweet/<int:pk>/like/', views.like_tweet, name='tweet-like'),
+    path('tweet/<int:pk>/like/', views.like_tweet),
+    path('tweet/<int:pk>/like/users/', views.users_who_liked),
     path('tweet/new/', views.TweetCreateView.as_view(), name='tweet-create'),
     path('tweet/<int:pk>/update/', views.TweetUpdateView.as_view(), name='tweet-update'),
     path('tweet/<int:pk>/delete', views.TweetDeleteView.as_view(), name='tweet-delete')

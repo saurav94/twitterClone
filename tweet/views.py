@@ -17,7 +17,7 @@ def about(request):
 def like_tweet(request, pk):
     tweet = get_object_or_404(Tweet, id=pk)
 
-    likeData = {
+    like_data = {
         "id": pk,
         "like": False,
         "count": 0
@@ -25,11 +25,25 @@ def like_tweet(request, pk):
     if tweet.likes.filter(id=request.user.id).exists():
         tweet.likes.remove(request.user)
     else:
-        likeData['like'] = True
+        like_data['like'] = True
         tweet.likes.add(request.user)
 
-    likeData['count'] = tweet.get_likes_count()
-    return Response(likeData)
+    like_data['count'] = tweet.get_likes_count()
+    return Response(like_data)
+
+
+@api_view(['GET'])
+@login_required
+def users_who_liked(request, pk):
+    tweet = get_object_or_404(Tweet, id=pk)
+    users = tweet.likes.all()
+
+    users_list = []
+    for user in users:
+        users_list.append(user.username)
+
+    return Response(users_list)
+
 
 class TweetListView(ListView):
     model = Tweet

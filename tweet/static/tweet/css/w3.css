@@ -240,3 +240,7 @@ p{margin-top: 1rem;}
 .detailTweet{
     cursor: pointer;
 }
+.link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

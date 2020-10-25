@@ -54,18 +54,43 @@ function likeTweet(likeUrl){
         method: 'GET',
         data: {},
         success: function(data) {
-        console.log(data)
-        likeCountId = "#likeCount-" + data.id
-        $(likeCountId)[0].innerText = data.count + " likes"
+            console.log(data)
+            likeCountId = "#likeCount-" + data.id
+            $(likeCountId)[0].innerText = data.count + " likes"
 
-        likeButtonId = "#likeButton-" + data.id
-        if (data.like){
-            $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-down"></i> &nbsp;Unlike'
+            likeButtonId = "#likeButton-" + data.id
+            if (data.like){
+                $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-down"></i> &nbsp;Unlike'
+            }
+            else {
+                $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-up"></i> &nbsp;Like'
+            }
+        },
+        error: function(error){
+            console.log(error)
         }
-        else {
-            $(likeButtonId)[0].innerHTML = '<i class="fa fa-thumbs-up"></i> &nbsp;Like'
-        }
-        
+    })
+}
+
+function getUsersWhoLiked(likeUrl) {
+    likeUrl = likeUrl + "/like/users/"
+
+    $.ajax({
+        url: likeUrl,
+        method: 'GET',
+        data: {},
+        success: function(data) {
+            console.log(data)
+            $(".modal-title")[0].innerText = "Liked by"
+
+            bodyStr = "<ul class='list-group list-group-flush'>"
+            for(var i in data){
+                username = data[i]
+                userUrl = "user/" + username
+                // bodyStr = bodyStr + "<div><a href='"+ userUrl + "'>" + username +"</a></div>\n"
+                bodyStr = bodyStr + "<li class='list-group-item'><a href='"+ userUrl + "'>" + username +"</a></li>\n"
+            }
+            $(".modal-body")[0].innerHTML = bodyStr + "</ul>"
         },
         error: function(error){
             console.log(error)
