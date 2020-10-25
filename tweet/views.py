@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -38,7 +37,7 @@ class TweetListView(ListView):
     context_object_name = 'tweets'
     ordering = ['-date_posted']
     paginate_by = 5
-    
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["is_liked"] = {}
@@ -46,9 +45,9 @@ class TweetListView(ListView):
         for tweet in context['tweets']:
             if tweet.likes.filter(id=self.request.user.id).exists():
                 context["is_liked"][tweet.id] = True
-            else:
-                context["is_liked"][tweet.id] = False
-        
+            # else:
+            #     context["is_liked"][tweet.id] = False
+
         return context
 
 
@@ -61,6 +60,18 @@ class UserTweetListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Tweet.objects.filter(author=user).order_by('-date_posted')
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["is_liked"] = {}
+
+        for tweet in context['tweets']:
+            if tweet.likes.filter(id=self.request.user.id).exists():
+                context["is_liked"][tweet.id] = True
+            # else:
+            #     context["is_liked"][tweet.id] = False
+
+        return context
 
 
 class TweetDetailView(DetailView):
@@ -74,7 +85,7 @@ class TweetDetailView(DetailView):
 
         if tweet.likes.filter(id=self.request.user.id).exists():
             context["is_liked"] = True
-        
+
         return context
 
 
