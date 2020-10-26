@@ -4,29 +4,57 @@
 <div class="w3-container w3-content" style="max-width:1400px;margin-top: 10px;">
   <div class="w3-col m12">
     <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px; height: 60px;">
-        <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
-        <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
-        <br>
-        <hr class="w3-clear">
-        <p>{{ object.text }}</p>
-        {% if object.image %}
-          <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
-        {% endif %}
-        <p id="likeCount-{{object.id}}" class="text-muted">{{ object.get_likes_count }} likes</p>
-        {% if object.author == user %}
-          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+      <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="tweet-author-image w3-left w3-circle w3-margin-right">
+      <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
+      <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
+      <br>
+      <hr class="w3-clear">
+      <p>{{ object.text }}</p>
+      {% if object.image %}
+        <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
+      {% endif %}
+      <p>
+        <span id="likeCount-{{object.id}}" class="link text-muted" onclick="getUsersWhoLiked('{{ object.get_absolute_url }}')"
+          data-toggle="modal" data-target="#myModal">{{object.get_likes_count}} likes</span>
+        <span id="commentCount-{{object.id}}" class="link text-muted" style="margin-left: 5px;">{{object.get_comments_count}} comments</span>
+      </p>
+      {% if object.author == user %}
+        <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+        <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+      {% else %}
+        {% if is_liked %}
+          <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a> 
         {% else %}
-          {% if is_liked %}
-            <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a> 
-          {% else %}
-            <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
-          {% endif %}
-          <!-- <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a>  -->
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
+          <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
         {% endif %}
+        <!-- <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a>  -->
+        <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
+      {% endif %}
+
+      {% for comment in object.comments.all %}
+        <div id="comment-{{comment.id}}" class="w3-container w3-card w3-white w3-round w3-margin"><br>
+          <img src="{{comment.user.profile.image.url}}" alt="Avatar" class="comment-author-image w3-left w3-circle w3-margin-right">
+          <span class="w3-right w3-opacity">{{comment.date_added}}</span>
+          <a href="{% url 'user-tweets' comment.user.username %}" ><h5>{{ comment.user.username }}</h5></a>
+          <br>
+          <hr class="comments-line w3-clear">
+          <p class="comments-p">{{comment.body}}</p>
+          {% if comment.user == request.user %}
+            <button onclick="deleteComment('{{comment.get_delete_url}}','{{comment.id}}')" class="w3-button w3-theme-d2 w3-margin-bottom"> Delete</button>
+          {% endif %}
+        </div> 
+      {% endfor %}
+      
+      <form method="POST" action="{% url 'comment-create' object.id %}">
+        {% csrf_token %}
+        <div class="w3-container w3-card w3-white w3-round w3-margin">
+          <p><textarea id ="commentBox" class="w3-border w3-padding" name='body'></textarea></p>
+          <!-- <a onclick="comment_on_tweet('{{ object.get_absolute_url }}')" type="button" class="w3-button w3-theme"><i class="fa fa-pencil"></i> Comment</a>  -->
+          <button type="submit" class="w3-button w3-theme w3-margin-bottom"><i class="fa fa-pencil"></i> Comment</a> 
+        </div>
+      </form>
     </div>
+
   </div>
 </div>
 

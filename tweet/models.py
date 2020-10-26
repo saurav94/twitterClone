@@ -12,10 +12,13 @@ class Tweet(models.Model):
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
 
     def __str__(self):
-        return self.author.username + " " + self.text[:20]
+        return self.author.username + ": " + self.text[:30]
 
     def get_likes_count(self):
         return self.likes.count()
+    
+    def get_comments_count(self):
+        return self.comments.count()
 
     def is_liked_by_user(self, userId):
         return self.likes.filter(id=userId).exists()
@@ -24,3 +27,15 @@ class Tweet(models.Model):
         return reverse('tweet-detail', kwargs={'pk': self.pk})
 
 
+class Comment(models.Model):
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + ": " + self.body[:20]
+
+    def get_delete_url(self):
+        return reverse('comment-delete', kwargs={'pk': self.pk})
+    

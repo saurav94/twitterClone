@@ -244,3 +244,28 @@ p{margin-top: 1rem;}
     text-decoration: underline;
     cursor: pointer;
 }
+.tweet-author-image {
+    width: 60px;
+    height: 60px;
+}
+.comment-author-image {
+    margin-top: 0px;
+    width: 40px;
+    height: 40px;
+}
+.comments-line{
+    margin-top: -10px;
+}
+.comments-p{
+    margin-top: 0px;
+}
+#commentBox{
+    width: 100%;
+}
+.toast{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}

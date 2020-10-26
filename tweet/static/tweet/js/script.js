@@ -34,11 +34,6 @@ function myFunction(id) {
         x.previousElementSibling.className.replace(" w3-theme-d1", "");
     }
 }
-  
-// Create Tweet Page
-function openCreateTweet() {
-    window.location.href = "{% url 'tweet-create' %}"
-}
 
 // Open Tweet detail page
 function openDetailTweet(tweetUrl) {
@@ -47,14 +42,13 @@ function openDetailTweet(tweetUrl) {
 
 // call like rest api
 function likeTweet(likeUrl){
-    likeUrl = likeUrl + "/like/"
+    likeUrl = likeUrl + "like/"
 
     $.ajax({
         url: likeUrl,
         method: 'GET',
         data: {},
         success: function(data) {
-            console.log(data)
             likeCountId = "#likeCount-" + data.id
             $(likeCountId)[0].innerText = data.count + " likes"
 
@@ -73,7 +67,7 @@ function likeTweet(likeUrl){
 }
 
 function getUsersWhoLiked(likeUrl) {
-    likeUrl = likeUrl + "/like/users/"
+    likeUrl = likeUrl + "like/users/"
 
     $.ajax({
         url: likeUrl,
@@ -91,6 +85,53 @@ function getUsersWhoLiked(likeUrl) {
                 bodyStr = bodyStr + "<li class='list-group-item'><a href='"+ userUrl + "'>" + username +"</a></li>\n"
             }
             $(".modal-body")[0].innerHTML = bodyStr + "</ul>"
+        },
+        error: function(error){
+            console.log(error)
+        }
+    })
+}
+
+// function comment_on_tweet(tweetUrl) {
+//     tweetUrl = tweetUrl + "comment/"
+//     body = $("#commentBox")[0].innerText
+
+//     $.ajax({
+//         url: tweetUrl,
+//         method: 'POST',
+//         data: {'body': body},
+//         beforeSend: function(xhr) {
+//             xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
+//           },
+//         success: function(data) {
+//             console.log(data)
+//         },
+//         error: function(error){
+//             console.log(error)
+//         }
+//     })
+// }
+
+function deleteComment(commentUrl, commentId){
+    $.ajax({
+        url: commentUrl,
+        method: 'GET',
+        data: {},
+        success: function(data) {
+            console.log(data)
+            commentId = "#comment-" + commentId
+            
+            // Show toast
+            $(".toast-header")[0].innerText = "Delete"
+            $(".toast-body")[0].innerText = "Comment successfully deleted"
+            $('.toast').toast('show');
+
+            // Remove element from screen
+            $(commentId).remove()
+
+            // Update number of comments
+            commentCountId = "#commentCount-" + data.tweet_id
+            $(commentCountId)[0].innerText = data.comments_on_tweet + " comments"
         },
         error: function(error){
             console.log(error)

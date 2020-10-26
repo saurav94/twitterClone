@@ -1,14 +1,21 @@
-from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Tweet
+from .models import Tweet, Comment
 
 
 def about(request):
+    if request.user.is_authenticated:
+        return redirect(settings.LOGIN_REDIRECT_URL)
+    
     return render(request, 'tweet/about.html')
 
 
@@ -34,7 +41,7 @@ def like_tweet(request, pk):
 
 @api_view(['GET'])
 @login_required
-def users_who_liked(request, pk):
+def liked_by(request, pk):
     tweet = get_object_or_404(Tweet, id=pk)
     users = tweet.likes.all()
 
@@ -44,6 +51,36 @@ def users_who_liked(request, pk):
 
     return Response(users_list)
 
+# @api_view(['POST'])
+@login_required
+def create_comment(request, pk):
+    tweet = get_object_or_404(Tweet, id=pk)
+
+    if request.method == "POST":
+        body = request.POST.get('body')
+        print("comment body: ", body)
+        comment = Comment.objects.create(tweet=tweet, user=request.user, body=body)
+        comment.save()
+        messages.success(request, f'Comment added sucessfully')
+
+    return redirect(tweet.get_absolute_url())
+
+@api_view(['GET'])
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, id=pk)
+
+    response_msg = "Success"
+    comments_count = comment.tweet.comments.count()
+    tweetId = comment.tweet.id
+
+    if comment.user == request.user:
+        comment.delete()
+        comments_count = comments_count - 1
+    else:
+        response_msg = "Unauthorized"
+
+    return Response({"message": response_msg, "comments_on_tweet": comments_count, "tweet_id": tweetId})
 
 class TweetListView(ListView):
     model = Tweet
@@ -100,6 +137,7 @@ class TweetDetailView(DetailView):
         if tweet.likes.filter(id=self.request.user.id).exists():
             context["is_liked"] = True
 
+        print(context['object'].comments)
         return context
 
 
