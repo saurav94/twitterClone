@@ -10,13 +10,12 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Tweet, Comment
-from users.models import Profile
 
 
 def about(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)
-
+    
     return render(request, 'tweet/about.html')
 
 
@@ -53,8 +52,6 @@ def liked_by(request, pk):
     return Response(users_list)
 
 # @api_view(['POST'])
-
-
 @login_required
 def create_comment(request, pk):
     tweet = get_object_or_404(Tweet, id=pk)
@@ -62,13 +59,11 @@ def create_comment(request, pk):
     if request.method == "POST":
         body = request.POST.get('body')
         print("comment body: ", body)
-        comment = Comment.objects.create(
-            tweet=tweet, user=request.user, body=body)
+        comment = Comment.objects.create(tweet=tweet, user=request.user, body=body)
         comment.save()
         messages.success(request, f'Comment added sucessfully')
 
     return redirect(tweet.get_absolute_url())
-
 
 @api_view(['GET'])
 @login_required
@@ -86,31 +81,6 @@ def delete_comment(request, pk):
         response_msg = "Unauthorized"
 
     return Response({"message": response_msg, "comments_on_tweet": comments_count, "tweet_id": tweetId})
-
-
-@api_view(['GET'])
-@login_required
-def follow_user(request, username):
-    user = get_object_or_404(User, username=username)
-
-    follow_data = {
-        "followers": 0,
-        "following": 0,
-        "followed": ''
-    }
-
-    if user.profile.is_followed_by_user(request.user.profile.id):
-        user.profile.followers.remove(request.user.profile)
-    else:
-        user.profile.followers.add(request.user.profile)
-
-    follow_data["followers"] = user.profile.get_followers_count()
-    follow_data["following"] = user.profile.get_following_count()
-    follow_data["followed"] = user.profile.is_followed_by_user(
-        request.user.profile.id)
-
-    return Response(follow_data)
-
 
 class TweetListView(ListView):
     model = Tweet
@@ -141,14 +111,10 @@ class UserTweetListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Tweet.objects.filter(author=user).order_by('-date_posted')
-
+    
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['profile'] = get_object_or_404(
-            User, username=self.kwargs.get('username'))
         context["is_liked"] = {}
-        context['is_followed'] = context['profile'].profile.is_followed_by_user(
-            self.request.user.profile.id)
 
         for tweet in context['tweets']:
             if tweet.likes.filter(id=self.request.user.id).exists():

@@ -3,7 +3,7 @@
 
 {% block content %}
 <!-- Page Container -->
-<div class="w3-container w3-content" style="max-width:1400px;margin-top: 10px;">
+<div class="w3-container w3-content" style="max-width:1400px;margin-top: 10px;">    
   <!-- The Grid -->
   <div class="w3-row">
 
@@ -24,33 +24,33 @@
           </div>
           <button onclick="myFunction('Demo3')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> My Photos</button>
           <div id="Demo3" class="w3-hide w3-container">
-            <div class="w3-row-padding">
-              <br>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/lights.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/nature.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/mountains.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/forest.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/nature.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
-              <div class="w3-half">
-                <img src="{% static 'tweet/images/snow.jpg' %}" style="width:100%" class="w3-margin-bottom">
-              </div>
+          <div class="w3-row-padding">
+          <br>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/lights.jpg' %}" style="width:100%" class="w3-margin-bottom">
+            </div>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/nature.jpg' %}" style="width:100%" class="w3-margin-bottom">
+            </div>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/mountains.jpg' %}" style="width:100%" class="w3-margin-bottom">
+            </div>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/forest.jpg' %}" style="width:100%" class="w3-margin-bottom">
+            </div>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/nature.jpg' %}" style="width:100%" class="w3-margin-bottom">
+            </div>
+            <div class="w3-half">
+              <img src="{% static 'tweet/images/snow.jpg' %}" style="width:100%" class="w3-margin-bottom">
             </div>
           </div>
-        </div>
+          </div>
+        </div>      
       </div>
       <br>
-
-      <!-- Interests -->
+    
+      <!-- Interests --> 
       <div class="w3-card w3-round w3-white w3-hide-small">
         <div class="w3-container">
           <p>Interests</p>
@@ -70,7 +70,7 @@
         </div>
       </div>
       <br>
-
+      
       <!-- Alert Box -->
       <div class="w3-container w3-display-container w3-round w3-theme-l4 w3-border w3-theme-border w3-margin-bottom w3-hide-small">
         <span onclick="this.parentElement.style.display='none'" class="w3-button w3-theme-l3 w3-display-topright">
@@ -80,66 +80,63 @@
         <p>People are looking at your profile. Find out who.</p>
       </div>
 
-      <!-- End Left Column -->
+    <!-- End Left Column -->
     </div>
-
+    
     <div class="w3-col m7">
-      <!-- Middle Column -->
-
-      {% block create-tweet %} {% endblock %}
-
+    <!-- Middle Column -->
+    
+    {% block create-tweet %} {% endblock %}
+    
       <div class="infinite-container">
         {% for object in tweets %}
-        <div class="infinite-item w3-container w3-card w3-white w3-round w3-margin"><br>
-          <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="tweet-author-image w3-left w3-circle w3-margin-right">
-
-          <a href="{% url 'user-tweets' object.author.username %}">
-            <h4>{{ object.author }}</h4>
-          </a>
-          <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
-          <br>
-          <hr class="w3-clear">
-          <div class="detailTweet" onclick="openDetailTweet('{{ object.get_absolute_url }}')">
-            <p>{{ object.text }}</p>
-            {% if object.image %}
-            <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
+          <div class="infinite-item w3-container w3-card w3-white w3-round w3-margin"><br>
+            <img src="{{ object.author.profile.image.url }}" alt="Avatar" class="tweet-author-image w3-left w3-circle w3-margin-right">
+            
+            <a href="{% url 'user-tweets' object.author.username %}" ><h4>{{ object.author }}</h4></a>
+            <span class="w3-right w3-opacity">{{ object.date_posted }}</span>
+            <br>
+            <hr class="w3-clear">
+            <div class="detailTweet" onclick="openDetailTweet('{{ object.get_absolute_url }}')">
+              <p>{{ object.text }}</p>
+              {% if object.image %}
+                <img src="{{ object.image.url }}" style="width:100%" class="w3-margin-bottom">
+              {% endif %}
+              
+            </div>
+              <span id="likeCount-{{object.id}}" class="link text-muted" onclick="getUsersWhoLiked('{{ object.get_absolute_url }}')"
+                data-toggle="modal" data-target="#myModal">{{object.get_likes_count}} likes</span>
+              <span id="commentCount-{{object.id}}" class="link text-muted" style="margin-left: 5px;">{{object.get_comments_count}} comments</span>
+            </p>
+            {% if object.author == user %}
+              <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a> 
+              <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a> 
+            {% else %}
+              {% if object.id in is_liked %}
+                <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a> 
+              {% else %}
+                <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a> 
+              {% endif %}
+              <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
             {% endif %}
-
           </div>
-          <span id="likeCount-{{object.id}}" class="link text-muted" onclick="getUsersWhoLiked('{{ object.get_absolute_url }}')" data-toggle="modal" data-target="#myModal">{{object.get_likes_count}} likes</span>
-          <span id="commentCount-{{object.id}}" class="link text-muted" style="margin-left: 5px;">{{object.get_comments_count}} comments</span>
-          </p>
-          {% if object.author == user %}
-          <a type="button" class="w3-button w3-theme-d1 w3-margin-bottom" href="{% url 'tweet-update' object.id %}"> Update</a>
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="{% url 'tweet-delete' object.id %}"> Delete</a>
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="#"> Retweet</a>
-          {% else %}
-          {% if object.id in is_liked %}
-          <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-down"></i>  Unlike</a>
-          {% else %}
-          <a type="button" id="likeButton-{{object.id}}" onclick="likeTweet('{{ object.get_absolute_url }}')" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Like</a>
-          {% endif %}
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>  Comment</a>
-          <a type="button" class="w3-button w3-theme-d2 w3-margin-bottom" href="#"> Retweet</a>
-          {% endif %}
-        </div>
         {% endfor %}
       </div>
-
+    
       {% if is_paginated and page_obj.has_next %}
-      <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
-      <div class="d-flex justify-content-center" style="display:none;">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
+        <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+        <div class="d-flex justify-content-center" style="display:none;">
+          <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
         </div>
-      </div>
       {% endif %}
 
+      
 
-
-      <!-- End Middle Column -->
+    <!-- End Middle Column -->
     </div>
-
+    
     <!-- Right Column -->
     <div class="w3-col m2">
       <div class="w3-card w3-round w3-white w3-center">
@@ -148,18 +145,18 @@
           <hr class="w3-clear">
 
           <div>
-            <p><strong>Session</strong></p>
-            <p>Tuesday 15:00</p>
-            <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+              <p><strong>Session</strong></p>
+              <p>Tuesday 15:00</p>
+              <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
           </div>
           <hr class="w3-clear">
 
           <div>
-            <p><strong>Concert</strong></p>
-            <p>Friday 19:00</p>
-            <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+              <p><strong>Concert</strong></p>
+              <p>Friday 19:00</p>
+              <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
           </div>
-
+          
         </div>
       </div>
       <br>
@@ -180,14 +177,14 @@
         </div>
       </div>
       <br>
-
-      <!-- End Right Column -->
+    
+    <!-- End Right Column -->
     </div>
-
-    <!-- End Grid -->
+    
+  <!-- End Grid -->
   </div>
 
-  <!-- End Page Container -->
+<!-- End Page Container -->
 </div>
 <br>
 {% endblock content %}
