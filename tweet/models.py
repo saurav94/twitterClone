@@ -16,7 +16,7 @@ class Tweet(models.Model):
 
     def get_likes_count(self):
         return self.likes.count()
-
+    
     def get_comments_count(self):
         return self.comments.count()
 
@@ -28,8 +28,7 @@ class Tweet(models.Model):
 
 
 class Comment(models.Model):
-    tweet = models.ForeignKey(
-        Tweet, on_delete=models.CASCADE, related_name='comments')
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
@@ -38,4 +37,5 @@ class Comment(models.Model):
         return self.user.username + ": " + self.body[:20]
 
     def get_delete_url(self):
-        return reverse('comment-delete')
+        return reverse('comment-delete', kwargs={'pk': self.pk})
+    

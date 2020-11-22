@@ -1,8 +1,8 @@
 .DS_Store
 .vscode/
 .idea/
-myvenv
+
 __pycache__/
 *.py[cod]
-media
+
 db.sqlite3
